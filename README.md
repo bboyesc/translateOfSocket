@@ -74,8 +74,32 @@
 >注意：在OS X中，CFNetwork框架是Core Services框架的子框架；在iOS中，CFNetwork框架是一个独立的一级框架。
 <br />
 
-###写一个基于TCP的客户端
+### 写一个基于TCP的客户端
+<br />
+你编写友好的网络连接接口的方式是取决于你选择的编程语言、连接的类型(TCP,UDP等等)、是否要和其他平台分享相同的代码。
+<br />
+.在Objective-C中用NStream来建立连接。
+<br />
+如果你要连接到一个主机，新建一个CFHost对象(不是NSHost-他们不能无缝桥接(toll-free bridged)),用[CFStreamCreatePairWithSocketToHost](https://developer.apple.com/library/ios/documentation/CoreFoundation/Reference/CFStreamConstants/index.html#//apple_ref/c/func/CFStreamCreatePairWithSocketToHost)和[CFStreamCreatePairWithSocketToCFHost](https://developer.apple.com/library/ios/documentation/CoreFoundation/Reference/CFSocketStreamRef/index.html#//apple_ref/c/func/CFStreamCreatePairWithSocketToCFHost)来开始一个套接字连接到指定主机和端口，并且关联两个CFStream对象。你也可以用NSStream对象。
+<br />
+你也可以用 CFStreamCreatePairWithSocketToNetService 函数来连接到一个Bonjour service(好像用于苹果设备之间的通讯)。读[ Discovering and Advertising Network Services](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Discovering,Browsing,AndAdvertisingNetworkServices/Discovering,Browsing,AndAdvertisingNetworkServices.html#//apple_ref/doc/uid/TP40010220-CH9)来获取更多信息。
+<br />
+.用POSIX标准如果需要支持跨平台。
+<br />
+如果你写的代码只用与苹果平台，name你要避免使用POSIX标准的代码，因为他们和高层的协议比起来，他们更难以操作。然而，如果你写的网络模块代码必须在不同平台分享的话，你可以用POSIX标准的网络API从而你能复用同样的代码。
+<br />
+千万别在主线程使用POSIX协议网络的同步API。如果你要用这种API，你必须在一个单独的线程里。
+<br />
+>注意：POSIX协议网络不支持iOS平台的蜂窝网络，因为这个原因，iOS平台不需要POSIX标准的网络API。
 
+<br />
+下面将讲NSStream的用法，除非特别标明，CFStream API一般都有一个同样名字的函数,而且实现也相似。
+<br />
+要了解更多POSIX标准的套接字API，读UNIX Socket FAQ在[ http://developerweb.net/](http://developerweb.net/) .
+<br />
+
+#### 建立一个链接
+<br />
 
 
 国内ios界最大的行动已经开始了。全面开始翻译ios开发者文档。
