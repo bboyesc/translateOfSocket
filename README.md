@@ -78,7 +78,7 @@
 <br />
 你编写友好的网络连接接口的方式是取决于你选择的编程语言、连接的类型(TCP,UDP等等)、是否要和其他平台分享相同的代码。
 <br />
-.在Objective-C中用NStream来建立连接。
+.在Objective-C中用NSStream来建立连接。
 <br />
 如果你要连接到一个主机，新建一个CFHost对象(不是NSHost-他们不能无缝桥接(toll-free bridged)),用[CFStreamCreatePairWithSocketToHost](https://developer.apple.com/library/ios/documentation/CoreFoundation/Reference/CFStreamConstants/index.html#//apple_ref/c/func/CFStreamCreatePairWithSocketToHost)和[CFStreamCreatePairWithSocketToCFHost](https://developer.apple.com/library/ios/documentation/CoreFoundation/Reference/CFSocketStreamRef/index.html#//apple_ref/c/func/CFStreamCreatePairWithSocketToCFHost)来开始一个套接字连接到指定主机和端口，并且关联两个CFStream对象。你也可以用NSStream对象。
 <br />
@@ -100,7 +100,14 @@
 
 #### 建立一个链接
 <br />
-
+通常情况下，建立一个TCP链接到其他主机用的是数据流。Streams自动处理TCP链接面临的挑战。比如，数据流提供了通过主机名(hostname)链接的能力，在iOS中，数据流会自动唤醒设备得蜂窝模式或者指定的VPN当需要的时候(不像CFSocket 或者 BSD Socket)。相比于底层协议，Streams更相似Cocoa框架的接口，和Cocoa的文件操作API有很大的相似性。
+<br />
+你获取或者发送数据流取决于你是否要被链接或者主动链接到一个主机。
+<br />
+.如果你已经知道了一个主机的DNS名字或者IP地址，使用 Core Foundation来读取或者发送数据流通过 CFStreamCreatePairWithSocketToHost函数。你可以充分利用CFStream和NSStream的无缝转换。把CFReadStreamRef和CFWriteStreamRef对象转换为NSInputStream和 NSOutputStream对象。
+<br />
+.如果你想通过CFNetServiceBrowser对象来链接到一个主机，你可以通过CFStreamCreatePairWithSocketToNetService函数来接收或者发送数据。读取[Discovering and Advertising Network Services](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Discovering,Browsing,AndAdvertisingNetworkServices/Discovering,Browsing,AndAdvertisingNetworkServices.html#//apple_ref/doc/uid/TP40010220-CH9)
+<br />
 
 国内ios界最大的行动已经开始了。全面开始翻译ios开发者文档。
 欢迎加入，小伙伴们。有兴趣的，想要参加的赶紧来吧。
