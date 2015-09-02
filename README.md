@@ -108,6 +108,41 @@
 <br />
 .如果你想通过CFNetServiceBrowser对象来链接到一个主机，你可以通过CFStreamCreatePairWithSocketToNetService函数来接收或者发送数据。读取[Discovering and Advertising Network Services](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Discovering,Browsing,AndAdvertisingNetworkServices/Discovering,Browsing,AndAdvertisingNetworkServices.html#//apple_ref/doc/uid/TP40010220-CH9)
 <br />
+当你得到输出路和输入流以后，在没有用arc的情况下你必须马上占有他们，把他们引用到一个NSInputStream和NSOutputStream对象，并且设置他们的代理对象(这个对象需要实现NSStreamDelegate协议)。通过调用open方法在当前运行时循环上执行他们。
+<br />
+>注意：如果你需要同时处理一个以上链接，你需要区分是那个输入流和输出流关联。最直接的方式你新疆一个链接对象同时拥有输入流和输出流的引用，并且把这个对象设置为他们的代理对象。
+
+<br />
+#### 事件处理
+当NSOutputStream对象的代理方法stream:handleEvent:被调用了，并且设置streamEvent参数的值为NSStreamEventHasSpaceAvailable，最后调用 write:maxLength:来发送数据。write:maxLength:方法要么返回发送的数据的长度，要么返回一个负数表示失败。如果这个方法返回的数据的长度小于你尝试发送的数据的长度，你必须把没有发送的那部分数据发送出去通过调用NSStreamEventHasSpaceAvailable事件。如果发生错误，你需要调用 streamError方法来确认是哪里发生了错误。
+<br />
+当NSInputStream对象的代理方法stream:handleEvent:被调用了，并且设置streamEvent参数的值为NSStreamEventHasBytesAvailable。你可以通过 read:maxLength:方法来读取接收到得数据。这个方法返回接收到得数据的长度或者返回一个负数表示接收失败。
+<br />
+如果接收到的数据的长度小于你需要的长度，你必须持有数据并且等待直到你收到所有的数据。如果发生错误，你需要调用 streamError方法来确认是哪里发生了错误。
+<br />
+如果链接的另一端中断了链接：
+<br />
+&nbsp;&nbsp;你的链接代理方法stream:handleEvent:被调用。并且streamEvent参数设置为NSStreamEventHasBytesAvailable。如果你去读取接收到的数据，你会发现长度为零。
+<br />
+&nbsp;&nbsp;你的代理方法stream:handleEvent: 会被调用。并且streamEvent参数被设置为 NSStreamEventEndEncountered。
+<br />
+当上面两个事件的其中一个发生了，代理方法需要处理链接操作结束工作和清理工作。
+<br />
+#### 结束链接
+<br />
+当结束一个链接的时候，我们首先要把它从当前运行时循环移除，设置链接的代理为nil(代理对象并没有被retain)。通过close方法关闭与链接关联的两个数据流，最后在释放者两个数据流对象(如果你没有使用ARC)或者把他们设置为nil。这就是通常的关闭链接的方式。然而，如果有下面两种情况你需要手动关闭链接：
+<br />
+&nbsp;&nbsp;对于一个数据流，如果你通过 setProperty:forKey: 方法设置 kCFStreamPropertyShouldCloseNativeSocket属性值为kCFBooleanFalse。
+<br />
+&nbsp;&nbsp;如果你通过CFStreamCreatePairWithSocket方法创建以BSD套接字为基础的数据流。一般情况下，数据流是在一个系统套接字(native socket)的基础上创建的，并且关闭的时候不会关闭底层的套接字。但是，你也可以设置自动关闭底层套接字通过设置kCFStreamPropertyShouldCloseNativeSocket属性值为kCFBooleanTrue。
+<br />
+#### 更多信息
+要了解更多, 读[Stream Programming Guide]和[Using NSStreams For A TCP Connection Without NSHost]中的[Setting Up Socket Streams]部分, 或者下载[SimpleNetworkStreams](https://developer.apple.com/library/ios/samplecode/SimpleNetworkStreams/Introduction/Intro.html#//apple_ref/doc/uid/DTS40008979)工程来看看.
+
+<br />
+### 写一个基于TCP的服务器
+未完待续。。。。。
+
 
 国内ios界最大的行动已经开始了。全面开始翻译ios开发者文档。
 欢迎加入，小伙伴们。有兴趣的，想要参加的赶紧来吧。
