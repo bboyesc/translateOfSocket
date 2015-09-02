@@ -74,7 +74,7 @@
 >注意：在OS X中，CFNetwork框架是Core Services框架的子框架；在iOS中，CFNetwork框架是一个独立的一级框架。
 <br />
 
-### 写一个基于TCP的客户端
+## 写一个基于TCP的客户端
 <br />
 你编写友好的网络连接接口的方式是取决于你选择的编程语言、连接的类型(TCP,UDP等等)、是否要和其他平台分享相同的代码。
 <br />
@@ -98,7 +98,7 @@
 要了解更多POSIX标准的套接字API，读UNIX Socket FAQ在[ http://developerweb.net/](http://developerweb.net/) .
 <br />
 
-#### 建立一个链接
+### 建立一个链接
 <br />
 通常情况下，建立一个TCP链接到其他主机用的是数据流。Streams自动处理TCP链接面临的挑战。比如，数据流提供了通过主机名(hostname)链接的能力，在iOS中，数据流会自动唤醒设备得蜂窝模式或者指定的VPN当需要的时候(不像CFSocket 或者 BSD Socket)。相比于底层协议，Streams更相似Cocoa框架的接口，和Cocoa的文件操作API有很大的相似性。
 <br />
@@ -113,7 +113,7 @@
 >注意：如果你需要同时处理一个以上链接，你需要区分是那个输入流和输出流关联。最直接的方式你新疆一个链接对象同时拥有输入流和输出流的引用，并且把这个对象设置为他们的代理对象。
 
 <br />
-#### 事件处理
+### 事件处理
 当NSOutputStream对象的代理方法stream:handleEvent:被调用了，并且设置streamEvent参数的值为NSStreamEventHasSpaceAvailable，最后调用 write:maxLength:来发送数据。write:maxLength:方法要么返回发送的数据的长度，要么返回一个负数表示失败。如果这个方法返回的数据的长度小于你尝试发送的数据的长度，你必须把没有发送的那部分数据发送出去通过调用NSStreamEventHasSpaceAvailable事件。如果发生错误，你需要调用 streamError方法来确认是哪里发生了错误。
 <br />
 当NSInputStream对象的代理方法stream:handleEvent:被调用了，并且设置streamEvent参数的值为NSStreamEventHasBytesAvailable。你可以通过 read:maxLength:方法来读取接收到得数据。这个方法返回接收到得数据的长度或者返回一个负数表示接收失败。
@@ -128,7 +128,7 @@
 <br />
 当上面两个事件的其中一个发生了，代理方法需要处理链接操作结束工作和清理工作。
 <br />
-#### 结束链接
+### 结束链接
 <br />
 当结束一个链接的时候，我们首先要把它从当前运行时循环移除，设置链接的代理为nil(代理对象并没有被retain)。通过close方法关闭与链接关联的两个数据流，最后在释放者两个数据流对象(如果你没有使用ARC)或者把他们设置为nil。这就是通常的关闭链接的方式。然而，如果有下面两种情况你需要手动关闭链接：
 <br />
@@ -136,11 +136,11 @@
 <br />
 &nbsp;&nbsp;如果你通过CFStreamCreatePairWithSocket方法创建以BSD套接字为基础的数据流。一般情况下，数据流是在一个系统套接字(native socket)的基础上创建的，并且关闭的时候不会关闭底层的套接字。但是，你也可以设置自动关闭底层套接字通过设置kCFStreamPropertyShouldCloseNativeSocket属性值为kCFBooleanTrue。
 <br />
-#### 更多信息
+### 更多信息
 要了解更多, 读[Stream Programming Guide]和[Using NSStreams For A TCP Connection Without NSHost]中的[Setting Up Socket Streams]部分, 或者下载[SimpleNetworkStreams](https://developer.apple.com/library/ios/samplecode/SimpleNetworkStreams/Introduction/Intro.html#//apple_ref/doc/uid/DTS40008979)工程来看看.
 
 <br />
-### 写一个基于TCP的服务器
+## 写一个基于TCP的服务器
 未完待续。。。。。
 
 
