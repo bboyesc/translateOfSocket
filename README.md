@@ -122,9 +122,9 @@
 <br />
 如果链接的另一端中断了链接：
 <br />
-&nbsp;&nbsp;你的链接代理方法stream:handleEvent:被调用。并且streamEvent参数设置为NSStreamEventHasBytesAvailable。如果你去读取接收到的数据，你会发现长度为零。
+&nbsp;&nbsp;&nbsp;&nbsp;你的链接代理方法stream:handleEvent:被调用。并且streamEvent参数设置为NSStreamEventHasBytesAvailable。如果你去读取接收到的数据，你会发现长度为零。
 <br />
-&nbsp;&nbsp;你的代理方法stream:handleEvent: 会被调用。并且streamEvent参数被设置为 NSStreamEventEndEncountered。
+&nbsp;&nbsp;&nbsp;&nbsp;你的代理方法stream:handleEvent: 会被调用。并且streamEvent参数被设置为 NSStreamEventEndEncountered。
 <br />
 当上面两个事件的其中一个发生了，代理方法需要处理链接操作结束工作和清理工作。
 <br />
@@ -132,9 +132,9 @@
 <br />
 当结束一个链接的时候，我们首先要把它从当前运行时循环移除，设置链接的代理为nil(代理对象并没有被retain)。通过close方法关闭与链接关联的两个数据流，最后在释放者两个数据流对象(如果你没有使用ARC)或者把他们设置为nil。这就是通常的关闭链接的方式。然而，如果有下面两种情况你需要手动关闭链接：
 <br />
-&nbsp;&nbsp;对于一个数据流，如果你通过 setProperty:forKey: 方法设置 kCFStreamPropertyShouldCloseNativeSocket属性值为kCFBooleanFalse。
+&nbsp;&nbsp;&nbsp;&nbsp;对于一个数据流，如果你通过 setProperty:forKey: 方法设置 kCFStreamPropertyShouldCloseNativeSocket属性值为kCFBooleanFalse。
 <br />
-&nbsp;&nbsp;如果你通过CFStreamCreatePairWithSocket方法创建以BSD套接字为基础的数据流。一般情况下，数据流是在一个系统套接字(native socket)的基础上创建的，并且关闭的时候不会关闭底层的套接字。但是，你也可以设置自动关闭底层套接字通过设置kCFStreamPropertyShouldCloseNativeSocket属性值为kCFBooleanTrue。
+&nbsp;&nbsp;&nbsp;&nbsp;如果你通过CFStreamCreatePairWithSocket方法创建以BSD套接字为基础的数据流。一般情况下，数据流是在一个系统套接字(native socket)的基础上创建的，并且关闭的时候不会关闭底层的套接字。但是，你也可以设置自动关闭底层套接字通过设置kCFStreamPropertyShouldCloseNativeSocket属性值为kCFBooleanTrue。
 <br />
 ### 更多信息
 要了解更多, 读[Stream Programming Guide]和[Using NSStreams For A TCP Connection Without NSHost]中的[Setting Up Socket Streams]部分, 或者下载[SimpleNetworkStreams](https://developer.apple.com/library/ios/samplecode/SimpleNetworkStreams/Introduction/Intro.html#//apple_ref/doc/uid/DTS40008979)工程来看看.
